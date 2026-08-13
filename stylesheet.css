@@ -146,6 +146,40 @@ h2 {
   letter-spacing: -0.5px;
 }
 
+.typing-intro {
+  min-height: 2.6em;
+  line-height: 1.25;
+}
+
+.typed-greeting {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  color: #4a5568;
+  letter-spacing: 0;
+}
+
+.typed-name {
+  display: inline-block;
+}
+
+.typed-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  font-weight: 400;
+  color: #1a1a1a;
+  animation: typed-blink 0.8s step-end infinite;
+}
+
+.typed-cursor--done {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes typed-blink {
+  50% { opacity: 0; }
+}
+
 .one {
   width: 160px;
   height: 160px;
@@ -258,6 +292,29 @@ span.highlight {
   color: #5f6368;
   font-size: 13px;
   font-style: italic;
+}
+
+.students-section {
+  margin-top: 20px;
+}
+
+.student-name {
+  color: #2c3e50;
+  font-weight: 700;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.student-meta {
+  color: #5f6368;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.students-note {
+  margin: 8px 0 0 0;
+  color: #2c3e50;
+  line-height: 1.6;
 }
 
 /* Profile section white rectangle */

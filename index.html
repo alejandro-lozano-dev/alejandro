@@ -30,9 +30,44 @@
               <tbody>
                 <tr style="padding:0px" class="profile-row">
                   <td style="padding:20px 2.5%;width:55%;vertical-align:middle" class="profile-text-cell">
-                    <p class="name" style="text-align: center;">
-                      Alejandro Lozano
+                    <p class="name typing-intro" style="text-align: center;" aria-label="Hello, nice to meet you. I am Alejandro Lozano">
+                      <span class="typed-greeting" id="typed-greeting"></span><br>
+                      <span class="typed-name" id="typed-name"></span><span class="typed-cursor" id="typed-cursor" aria-hidden="true">|</span>
                     </p>
+                    <script>
+                      (function () {
+                        var greeting = 'Hello, nice to meet you. I am';
+                        var name = 'Alejandro Lozano';
+                        var greetingEl = document.getElementById('typed-greeting');
+                        var nameEl = document.getElementById('typed-name');
+                        var cursorEl = document.getElementById('typed-cursor');
+                        var i = 0;
+                        var speed = 45;
+
+                        function typeGreeting() {
+                          if (i < greeting.length) {
+                            greetingEl.textContent += greeting.charAt(i);
+                            i++;
+                            setTimeout(typeGreeting, speed);
+                          } else {
+                            i = 0;
+                            setTimeout(typeName, 350);
+                          }
+                        }
+
+                        function typeName() {
+                          if (i < name.length) {
+                            nameEl.textContent += name.charAt(i);
+                            i++;
+                            setTimeout(typeName, speed + 15);
+                          } else {
+                            cursorEl.classList.add('typed-cursor--done');
+                          }
+                        }
+
+                        typeGreeting();
+                      })();
+                    </script>
                     <div class="profile-photo-mobile">
                       <a href="images/alejandro.jpg">
                         <img 
@@ -45,13 +80,23 @@
                     </div>
                     <p>I am a 4th-year PhD candidate at the <a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a>, where I work on vision-language foundation models. I am fortunate to be advised by <a href="https://ai.stanford.edu/~syyeung/">Serena Yeung-Levy</a> and supported by the <a href="https://arcinstitute.org/">Arc Institute</a>. I am deeply grateful to NVIDIA, Amazon, and HAI for generously funding my research.
 
-                      I also work part-time at Microsoft Research under the supervision of <a href="https://www.microsoft.com/en-us/research/people/hoifung-poon/">Hoifung Poon</a> (hosted by Jeya Maria Jose). Additionally, I am an editor of the multimodal AI for scientific research chapter for the <a href="https://hai.stanford.edu/ai-index">AI Index</a>.
+                      I also work part-time at Microsoft Research under the supervision of <a href="https://www.microsoft.com/en-us/research/people/hoifung-poon/"> Hoifung Poon</a> (and mentored by Jeya Maria Jose). Additionally, I am an editor of the multimodal AI for scientific research chapter for the <a href="https://hai.stanford.edu/ai-index">AI Index</a> and former student lead for <a href="https://ai4all.spcs.stanford.edu/">AI4ALL</a> at stanford (medical AI).
                    
                     </p>  
                     <p>
-                      My work focuses on multimodal learning, retrieval-augmented multimodal systems, and agent-based reasoning, especially as they apply to real-world precision medicine. Lately, I’ve been particularly interested in reasoning-intensive multimodal retrieval.
-                      Outside of research, I like to cook, work out, hike around the Bay Area, play guitar, and meditate.
+                      <span id="work-focus"></span>
+                      In my free time, I’m deeply interested in philosophy and systems psychology. I enjoy reading, cooking, working out, hiking, skydiving, playing guitar, and meditating.
                     </p>
+                    <script>
+                      (function () {
+                        var options = [
+                          'My work focuses on multimodal learning, retrieval-augmented multimodal systems, and agent-based reasoning, especially as they apply to real-world precision medicine.',
+                          'My work focuses on making lots of GPUs go brrrrr on medical data so we can hill-climb benchmarks.'
+                        ];
+                        document.getElementById('work-focus').textContent =
+                          options[Math.random() < 0.5 ? 0 : 1];
+                      })();
+                    </script>
 
                  
                     <p class="social-links" style="text-align:center">
@@ -83,6 +128,11 @@
             <section id="news" class="news-section">
               <h2>Recent News</h2>
               <ul class="news-list">
+
+                <li class="news-item">
+                  <span class="news-date">[Jun 2026]</span>
+                  <span class="news-content">1 paper accepted to ECCV 2026 (congrats Ryan). See you in Malmö (will def visit Copenhagen again).</span>
+                </li>
                 
                 <li class="news-item">
                   <span class="news-date">[Apr 2026]</span>
@@ -148,7 +198,49 @@
             <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;" class="papers-table">
               <tbody>
 
-              
+                <!-- Paper: MMBU -->
+                <tr bgcolor="#ffffff" class="paper-item">
+                  <td style="padding:20px;width:25%;vertical-align:middle">
+                    <div class="one">
+                      <img src='images/fig_mmbu.png' width="200">
+                    </div>
+                  </td>
+                  <td style="padding:20px;width:75%;vertical-align:middle">
+                    <a href="https://alejandro-lozano-dev.github.io/MMBU-Website/">
+                    <span class="papertitle">MMBU: A Massive Multi-modal Biomedical Understanding Benchmark to Probe the Perception Capabilities of Vision-Language Models</span>
+                    </a>
+                    <br>
+                    Ryan D'Cunha*,
+                    <strong>Alejandro Lozano</strong>*,
+                    Xiaoxiao Sun*,
+                    Daniel Vela Jarquin,
+                    Min Woo Sun,
+                    Josiah Aklilu,
+                    James Burgess,
+                    Yuhui Zhang,
+                    Ryan Nayebi,
+                    Paola Avila Robayo,
+                    Jin Ye,
+                    Ming Hu,
+                    Zhongying Deng,
+                    Junjun He,
+                    Xin Chen,
+                    Yue Yao,
+                    Robert Tibshirani,
+                    Jeffrey J. Nirschl,
+                    Serena Yeung-Levy
+                    <br>
+                    <em>ECCV 2026 / ECCV MEDFMB 2206 (Oral) </em>
+                    <br>
+                        <a href="https://alejandro-lozano-dev.github.io/MMBU-Website/">project page</a> /
+                        <a href="https://arxiv.org/abs/2606.06696">paper</a> /
+                        <a href="https://arxiv.org/abs/2606.06696"> Challenge (TBD) </a>
+                    <br>
+
+                    <p></p>
+                    We introduce MMBU, the largest biomedical vision-language benchmark to test biomedical perception, covering 35 submodalities with rich structured metadata across ungrounded classification, grounded classification, and object detection. Evaluating 17 VLMs, we find that medical adaptation yields uneven gains and that strong results on established benchmarks can mask gaps in visual perception and domain generalization.
+                  </td>
+                </tr>
 
                 <!-- Paper: Biomedica  -->
                 <tr bgcolor="#ffffff" class="paper-item">
@@ -211,7 +303,7 @@
                       Kevin Wu, 
                       Serena Yeung-Levy
                       <br>
-                      <em>TBD 2025</em>
+                      <em>ICLR 2025</em>
                       <br>
                         <a href="https://zy-f.github.io/website-med-evidence/">project page</a> /
                     <a href="https://arxiv.org/abs/2501.07171">paper</a> / 
@@ -490,7 +582,7 @@
                     <h2>Teaching</h2>
                     <ul class="teaching-list">
                       <li class="teaching-item">
-                        <div class="teaching-role">Stanford AI4ALL Medical AI Lead Mentor</div>
+                        <div class="teaching-role">Stanford <a href="https://ai4all.spcs.stanford.edu/">AI4ALL</a> Medical AI Lead Mentor</div>
                         <div class="teaching-meta">Stanford, 2024 and 2025</div>
                       </li>
                       <li class="teaching-item">
@@ -500,6 +592,32 @@
                       <li class="teaching-item">
                         <div class="teaching-role">Teaching assistant, CS 235: <em>Computational Methods for Biomedical Image Analysis and Interpretation</em></div>
                         <div class="teaching-meta">Stanford, 2022</div>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="teaching-section students-section" style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+              <tbody>
+                <tr>
+                  <td style="padding:20px 2.5%;width:100%;vertical-align:middle">
+                    <h2>Students</h2>
+                    <p class="students-note">
+                      I take one Master’s student a year. If you are at Stanford and would like to work with me, send me a message via Slack :)
+                    </p>
+                    <ul class="teaching-list students-list">
+                      <li class="teaching-item">
+                        <div class="student-name">Ryan D'Cunha</div>
+                        <div class="student-meta">Now interning at Apple</div>
+                      </li>
+                      <li class="teaching-item">
+                        <div class="student-name">Ryan Nayebi</div>
+                        <div class="student-meta">Still at Stanford</div>
+                      </li>
+                      <li class="teaching-item">
+                        <div class="student-name">Christos Polzak</div>
+                        <div class="student-meta">Now at NVIDIA</div>
                       </li>
                     </ul>
                   </td>
