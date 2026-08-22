@@ -78,11 +78,9 @@
                           alt="Alejandro Lozano headshot">
                       </a>
                     </div>
-                    <p>I am a 4th-year PhD candidate at the <a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a>, where I work on vision-language foundation models. I am fortunate to be advised by <a href="https://ai.stanford.edu/~syyeung/">Serena Yeung-Levy</a> and supported by the <a href="https://arcinstitute.org/">Arc Institute</a>. I am deeply grateful to NVIDIA, Amazon, and HAI for generously funding my research.
-
-                      I also work part-time at Microsoft Research under the supervision of <a href="https://www.microsoft.com/en-us/research/people/hoifung-poon/"> Hoifung Poon</a> (and mentored by Jeya Maria Jose). Additionally, I am an editor of the multimodal AI for scientific research chapter for the <a href="https://hai.stanford.edu/ai-index">AI Index</a> and former student lead for <a href="https://ai4all.spcs.stanford.edu/">AI4ALL</a> at stanford (medical AI).
-                   
-                    </p>  
+                    <p>I am a 5th-year PhD candidate at the <a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a>, where I work on vision-language foundation models. I am fortunate to be advised by <a href="https://ai.stanford.edu/~syyeung/">Serena Yeung-Levy</a> and supported by the <a href="https://arcinstitute.org/">Arc Institute</a>. I am deeply grateful to NVIDIA, Amazon, and Stanford HAI for believing in our team's mission generously funding our research.</p>
+                    <p>During my PhD, I worked part-time at Microsoft Research under the supervision of <a href="https://www.microsoft.com/en-us/research/people/hoifung-poon/">Hoifung Poon</a>, an amazing leader, with mentorship from the incredible Jeya Maria Jose, a once-in-a-lifetime mentor and researcher. I am deeply grateful to both of them for their mentorship and support.</p>
+                    <p>Additionally, I am an editor for the Multimodal AI for Scientific Research chapter of the <a href="https://hai.stanford.edu/ai-index">AI Index</a> and a former student lead for <a href="https://ai4all.spcs.stanford.edu/">AI4ALL</a> at Stanford, where I led the Medical AI section.</p>  
                     <p>
                       <span id="work-focus"></span>
                       In my free time, I’m deeply interested in philosophy and systems psychology. I enjoy reading, cooking, working out, hiking, skydiving, playing guitar, and meditating.
@@ -90,11 +88,11 @@
                     <script>
                       (function () {
                         var options = [
-                          'My work focuses on multimodal learning, retrieval-augmented multimodal systems, and agent-based reasoning, especially as they apply to real-world precision medicine.',
+                          'My current work focuses on multimodal learning, retrieval-augmented multimodal systems, and agent-based reasoning, especially as they apply to real-world precision medicine.',
                           'My work focuses on making lots of GPUs go brrrrr on medical data so we can hill-climb benchmarks.'
                         ];
                         document.getElementById('work-focus').textContent =
-                          options[Math.random() < 0.5 ? 0 : 1];
+                          options[Math.random() < 0.95 ? 0 : 1];
                       })();
                     </script>
 
@@ -575,6 +573,66 @@
               <div class="carousel-nav carousel-next" onclick="changePaper(1)">›</div>
               <div class="carousel-indicators"></div>
             </div>
+
+            <!-- Technical Reports -->
+            <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+              <tbody>
+                <tr>
+                  <td style="padding:20px 2.5%;width:100%;vertical-align:middle">
+                    <h2>Technical Reports</h2>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+              <tbody>
+                <tr bgcolor="#ffffff" class="report-item">
+                  <td style="padding:20px;width:25%;vertical-align:middle">
+                    <div class="one">
+                      <img src="images/aireport2026.png" alt="AI Index Report 2026" style="width:100%; max-width:160px; height:auto; display:block;">
+                    </div>
+                  </td>
+                  <td style="padding:20px;width:75%;vertical-align:middle">
+                    <a href="https://hai.stanford.edu/ai-index/2026-ai-index-report">
+                      <span class="papertitle">AI Index Report 2026</span>
+                    </a>
+                    <br>
+                    Medicine Chapter Contributor
+                    <br>
+                    <em>Stanford HAI</em>
+                    <br>
+                    <a href="https://hai.stanford.edu/ai-index/2026-ai-index-report">report</a> /
+                    <a href="https://arxiv.org/abs/2606.15708">arXiv</a>
+                    <br>
+                    <p></p>
+                    An overview on AI advancements in medicine, including scientific discovery, clinical applications, patient engagement, and ethical considerations.
+                  </td>
+                </tr>
+                <tr bgcolor="#ffffff" class="report-item">
+                  <td style="padding:20px;width:25%;vertical-align:middle">
+                    <div class="one">
+                      <img src="images/aireport2025.jpg" alt="AI Index Report 2025" style="width:100%; max-width:160px; height:auto; display:block;">
+                    </div>
+                  </td>
+                  <td style="padding:20px;width:75%;vertical-align:middle">
+                    <a href="https://hai.stanford.edu/ai-index/2025-ai-index-report">
+                      <span class="papertitle">AI Index Report 2025</span>
+                    </a>
+                    <br>
+                    Science and Medicine Chapter Contributor
+                    <br>
+                    <em>Stanford HAI</em>
+                    <br>
+                    <a href="https://hai.stanford.edu/ai-index/2025-ai-index-report">report</a> /
+                    <a href="https://arxiv.org/abs/2504.07139">arXiv</a>
+                    <br>
+                    <p></p>
+                    An overview of AI’s growing role in science and medicine, including scientific discovery, clinical applications, and medical foundation models.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
             <table class="teaching-section" style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
               <tbody>
                 <tr>
@@ -604,20 +662,24 @@
                   <td style="padding:20px 2.5%;width:100%;vertical-align:middle">
                     <h2>Students</h2>
                     <p class="students-note">
-                      I take one Master’s student a year. If you are at Stanford and would like to work with me, send me a message via Slack :)
+                      Probably one of the most rewarding experiences I’ve had at Stanford has been mentoring amazing students. I’m incredibly grateful to my students for placing such enormous trust in me and allowing me to help them achieve their goals. 
+
+
+
+                      I try to take one Master’s student each year. While I don’t have the bandwidth to take on multiple students, I’m always happy to chat, provide advice, and discuss potential research ideas. If your research interests align with mine and you’re at Stanford, please feel free to send me a message via Slack :)
                     </p>
                     <ul class="teaching-list students-list">
                       <li class="teaching-item">
-                        <div class="student-name">Ryan D'Cunha</div>
-                        <div class="student-meta">Now interning at Apple</div>
+                        <div class="student-name"><a href="https://ryan-dcunha.com/">Ryan D'Cunha</a></div>
+                        <div class="student-meta">Now doing research at Apple (intern)</div>
                       </li>
                       <li class="teaching-item">
                         <div class="student-name">Ryan Nayebi</div>
-                        <div class="student-meta">Still at Stanford</div>
+                        <div class="student-meta">Now doing research at the Snyder Lab (Stanford)</div>
                       </li>
                       <li class="teaching-item">
                         <div class="student-name">Christos Polzak</div>
-                        <div class="student-meta">Now at NVIDIA</div>
+                        <div class="student-meta">Now doing research at NVIDIA</div>
                       </li>
                     </ul>
                   </td>
@@ -671,8 +733,8 @@
       const papers = document.querySelectorAll('.paper-item');
       const indicatorsContainer = document.querySelector('.carousel-indicators');
       
-      // Make paper items clickable
-      papers.forEach(paper => {
+      // Make paper and report items clickable
+      document.querySelectorAll('.paper-item, .report-item').forEach(paper => {
         paper.addEventListener('click', function(e) {
           // Don't navigate if clicking on a link directly
           if (e.target.tagName === 'A' || e.target.closest('a')) {

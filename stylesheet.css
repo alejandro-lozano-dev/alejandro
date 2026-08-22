@@ -186,6 +186,18 @@ h2 {
   position: relative;
 }
 
+.report-item .one {
+  height: auto;
+  overflow: hidden;
+}
+
+.report-item .one img {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  display: block;
+}
+
 .two {
   width: 160px;
   height: 160px;
@@ -303,6 +315,15 @@ span.highlight {
   font-weight: 700;
   line-height: 1.6;
   margin-bottom: 4px;
+}
+
+.student-name a {
+  color: inherit;
+  font-weight: inherit;
+}
+
+.student-name a:hover {
+  color: #f09228;
 }
 
 .student-meta {
@@ -528,21 +549,25 @@ span.highlight {
 }
 
 /* Paper item hover effects (desktop) */
-.paper-item {
+.paper-item,
+.report-item {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
   cursor: pointer;
 }
 
-.paper-item td:first-child {
+.paper-item td:first-child,
+.report-item td:first-child {
   border-radius: 2px 0 0 2px;
 }
 
-.paper-item td:last-child {
+.paper-item td:last-child,
+.report-item td:last-child {
   border-radius: 0 2px 2px 0;
 }
 
-.paper-item:hover {
+.paper-item:hover,
+.report-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(26, 115, 232, 0.12);
   background-color: #fafbfd !important;
