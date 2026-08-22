@@ -70,8 +70,8 @@ body {
   position: relative;
 }
 
-/* Triangle mesh canvas */
-#triangle-mesh {
+/* Network background canvas */
+#network-bg {
   position: fixed;
   top: 0;
   left: 0;

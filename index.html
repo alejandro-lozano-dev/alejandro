@@ -19,8 +19,8 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
   </head>
   <body>
-    <!-- Triangle Mesh Background -->
-    <canvas id="triangle-mesh" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></canvas>
+    <!-- Network Background -->
+    <canvas id="network-bg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></canvas>
     
     <table style="width:100%;max-width:900px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
       <tbody>
@@ -960,177 +960,266 @@
       });
     </script>
     
-    <!-- Triangle Mesh Script -->
+    <!-- Network Background Script -->
     <script>
       (function() {
-        const canvas = document.getElementById('triangle-mesh');
+        const canvas = document.getElementById('network-bg');
         const ctx = canvas.getContext('2d');
-        let scrollY = 0;
-        let time = 0;
-        let needsRedraw = true;
-        
-        // Set canvas size
-        function resizeCanvas() {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          needsRedraw = true;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isMobile = () => window.innerWidth <= 768;
+
+        let width = 0;
+        let height = 0;
+        let dpr = 1;
+        let layers = [];
+        let mouse = { x: -9999, y: -9999 };
+
+        function makeLayer(opts) {
+          return {
+            nodes: [],
+            worldW: 0,
+            worldH: 0,
+            camX: 0,
+            camY: 0,
+            camVX: opts.camVX,
+            camVY: opts.camVY,
+            linkDist: opts.linkDist,
+            alpha: opts.alpha,
+            count: opts.count,
+            clusters: opts.clusters,
+            cellSize: opts.linkDist
+          };
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Track scroll (but don't use it for movement - only for color effects if needed)
-        window.addEventListener('scroll', () => {
-          scrollY = window.pageYOffset || window.scrollY || 0;
-        }, { passive: true });
-        
-        // Triangle mesh parameters - larger and more visible
-        const triangleSize = 60;
-        const spacing = 80; // More spacing between triangles
-        
-        // Generate triangle points
-        function createTriangle(x, y, size, angle = 0) {
-          const h = size * 0.866; // height of equilateral triangle
-          const cos = Math.cos(angle);
-          const sin = Math.sin(angle);
-          
-          // Center point
-          const cx = x + size / 2;
-          const cy = y - h / 3;
-          
-          // Three vertices
-          const v1 = { x: x - cx, y: y - cy };
-          const v2 = { x: x + size - cx, y: y - cy };
-          const v3 = { x: x + size / 2 - cx, y: y - h - cy };
-          
-          // Rotate around center
-          const rotate = (v) => ({
-            x: v.x * cos - v.y * sin + cx,
-            y: v.x * sin + v.y * cos + cy
-          });
-          
-          return [rotate(v1), rotate(v2), rotate(v3)];
-        }
-        
-        // Draw triangle with gradient
-        function drawTriangle(triangle, color, strokeColor) {
-          ctx.beginPath();
-          ctx.moveTo(triangle[0].x, triangle[0].y);
-          ctx.lineTo(triangle[1].x, triangle[1].y);
-          ctx.lineTo(triangle[2].x, triangle[2].y);
-          ctx.closePath();
-          
-          // Fill with gradient
-          const gradient = ctx.createLinearGradient(
-            triangle[0].x, triangle[0].y,
-            triangle[2].x, triangle[2].y
-          );
-          gradient.addColorStop(0, color);
-          gradient.addColorStop(1, color.replace(/[\d\.]+\)$/g, '0.3)'));
-          
-          ctx.fillStyle = gradient;
-          ctx.fill();
-          
-          // Stroke
-          ctx.strokeStyle = strokeColor;
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-        }
-        
-        // Draw function - very slow animation
-        function draw() {
-          // Clear canvas
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
-          // Very slow automatic movement
-          time += 0.05; // Very slow increment
-          
-          // Calculate offsets based only on very slow time movement (no scroll effect)
-          const triangleHeight = triangleSize * 0.866; // height of equilateral triangle
-          const rowHeight = triangleHeight + spacing;
-          const slowTimeOffset = time * 0.5; // Very slow time-based movement
-          const offsetY = slowTimeOffset % rowHeight;
-          const offsetX = Math.sin(time * 0.01) * 2; // Very subtle horizontal drift
-          
-          // No rotation
-          const rotation = 0;
-          
-          // Create proper tessellation - triangles that fit together without overlap
-          const cols = Math.ceil(canvas.width / (triangleSize + spacing)) + 2;
-          const rows = Math.ceil(canvas.height / rowHeight) + 2;
-          
-          for (let row = -1; row < rows; row++) {
-            for (let col = -1; col < cols; col++) {
-              const isUpsideDown = row % 2 === 1;
-              
-              // Offset odd rows by half triangle width to create tessellation, with spacing
-              const x = col * (triangleSize + spacing) + (isUpsideDown ? (triangleSize + spacing) / 2 : 0) + offsetX;
-              const y = row * rowHeight - offsetY;
-              
-              // Create triangle based on orientation
-              let triangle;
-              if (isUpsideDown) {
-                // Downward pointing triangle
-                const topY = y;
-                triangle = [
-                  { x: x, y: topY },
-                  { x: x + triangleSize, y: topY },
-                  { x: x + triangleSize / 2, y: topY + triangleHeight }
-                ];
-              } else {
-                // Upward pointing triangle
-                const bottomY = y + triangleHeight;
-                triangle = [
-                  { x: x, y: bottomY },
-                  { x: x + triangleSize, y: bottomY },
-                  { x: x + triangleSize / 2, y: bottomY - triangleHeight }
-                ];
-              }
-              
-              // Apply rotation only if needed (subtle)
-              if (Math.abs(rotation) > 0.001) {
-                const cx = x + triangleSize / 2;
-                const cy = y + triangleHeight / 2;
-                const cos = Math.cos(rotation);
-                const sin = Math.sin(rotation);
-                
-                triangle = triangle.map(v => ({
-                  x: (v.x - cx) * cos - (v.y - cy) * sin + cx,
-                  y: (v.x - cx) * sin + (v.y - cy) * cos + cy
-                }));
-              }
-              
-              // Dynamic color based on scroll and position only
-              const scrollIntensity = (Math.sin(scrollY * 0.003) + 1) * 0.5;
-              const wave1 = Math.sin(x * 0.02);
-              const wave2 = Math.cos(y * 0.02);
-              const positionEffect = (wave1 + wave2) * 0.5;
-              
-              // More noticeable colors with blue tint
-              const baseR = 200 + scrollIntensity * 30;
-              const baseG = 210 + scrollIntensity * 25;
-              const baseB = 240 + scrollIntensity * 15;
-              
-              const r = Math.floor(baseR + positionEffect * 20);
-              const g = Math.floor(baseG + positionEffect * 15);
-              const b = Math.floor(baseB + positionEffect * 10);
-              
-              // 99.375% transparent (0.625% opacity - 50% more transparent)
-              const alpha = 0.00625;
-              const color = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-              const strokeColor = `rgba(26, 115, 232, ${alpha * 1.5})`;
-              
-              drawTriangle(triangle, color, strokeColor);
+
+        function scatterNodes(layer) {
+          const nodes = [];
+          const clusterCount = layer.clusters;
+          const hubsPerCluster = isMobile() ? 3 : 5;
+          const perCluster = Math.floor(layer.count / clusterCount);
+
+          for (let c = 0; c < clusterCount; c++) {
+            const cx = (0.12 + Math.random() * 0.76) * layer.worldW;
+            const cy = (0.12 + Math.random() * 0.76) * layer.worldH;
+            const spread = Math.min(layer.worldW, layer.worldH) * (0.12 + Math.random() * 0.1);
+
+            for (let i = 0; i < perCluster; i++) {
+              const isHub = i < hubsPerCluster;
+              const ang = Math.random() * Math.PI * 2;
+              const rad = Math.pow(Math.random(), isHub ? 0.45 : 0.75) * spread;
+              nodes.push({
+                x: cx + Math.cos(ang) * rad,
+                y: cy + Math.sin(ang) * rad,
+                vx: (Math.random() - 0.5) * (isHub ? 0.1 : 0.2),
+                vy: (Math.random() - 0.5) * (isHub ? 0.1 : 0.2),
+                r: isHub ? 2.2 + Math.random() * 1.5 : 0.9 + Math.random() * 1.05,
+                hub: isHub,
+                cluster: c
+              });
             }
           }
+          layer.nodes = nodes;
         }
-        
-        // Continuous slow animation
+
+        function resize() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = Math.floor(width * dpr);
+          canvas.height = Math.floor(height * dpr);
+          canvas.style.width = width + 'px';
+          canvas.style.height = height + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          const area = width * height;
+          const mobile = isMobile();
+          const farCount = mobile ? Math.min(260, Math.max(140, Math.floor(area / 6500))) : Math.min(780, Math.max(450, Math.floor(area / 3200)));
+          const midCount = mobile ? Math.min(320, Math.max(180, Math.floor(area / 5000))) : Math.min(1100, Math.max(650, Math.floor(area / 2200)));
+          const nearCount = mobile ? Math.min(220, Math.max(120, Math.floor(area / 7500))) : Math.min(720, Math.max(380, Math.floor(area / 3400)));
+
+          layers = [
+            makeLayer({
+              camVX: 0.05, camVY: 0.03,
+              linkDist: Math.max(150, Math.min(220, Math.sqrt(area) / 9)),
+              alpha: 0.55,
+              count: farCount,
+              clusters: mobile ? 5 : 8
+            }),
+            makeLayer({
+              camVX: 0.11, camVY: 0.07,
+              linkDist: Math.max(110, Math.min(170, Math.sqrt(area) / 12)),
+              alpha: 1,
+              count: midCount,
+              clusters: mobile ? 6 : 10
+            }),
+            makeLayer({
+              camVX: 0.18, camVY: 0.12,
+              linkDist: Math.max(80, Math.min(130, Math.sqrt(area) / 16)),
+              alpha: 0.85,
+              count: nearCount,
+              clusters: mobile ? 5 : 9
+            })
+          ];
+
+          layers.forEach(function (layer, i) {
+            const scale = i === 0 ? 2.8 : i === 1 ? 2.4 : 2.0;
+            layer.worldW = width * scale;
+            layer.worldH = height * scale;
+            layer.camX = (layer.worldW - width) * 0.5;
+            layer.camY = (layer.worldH - height) * 0.5;
+            layer.cellSize = layer.linkDist;
+            scatterNodes(layer);
+          });
+        }
+
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', function (e) {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        }, { passive: true });
+        window.addEventListener('mouseleave', function () {
+          mouse.x = -9999;
+          mouse.y = -9999;
+        });
+
+        function wrap(node, layer) {
+          if (node.x < 0) node.x += layer.worldW;
+          if (node.x > layer.worldW) node.x -= layer.worldW;
+          if (node.y < 0) node.y += layer.worldH;
+          if (node.y > layer.worldH) node.y -= layer.worldH;
+        }
+
+        function buildGrid(layer) {
+          const grid = {};
+          const size = layer.cellSize;
+          const nodes = layer.nodes;
+          for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            const gx = Math.floor(n.x / size);
+            const gy = Math.floor(n.y / size);
+            const key = gx + ',' + gy;
+            if (!grid[key]) grid[key] = [];
+            grid[key].push(i);
+          }
+          return grid;
+        }
+
+        function drawLayer(layer) {
+          if (!prefersReducedMotion) {
+            layer.camX += layer.camVX;
+            layer.camY += layer.camVY;
+            if (layer.camX > layer.worldW - width) layer.camX = 0;
+            if (layer.camY > layer.worldH - height) layer.camY = 0;
+          }
+
+          const mx = mouse.x + layer.camX;
+          const my = mouse.y + layer.camY;
+          const nodes = layer.nodes;
+          const maxDist = layer.linkDist;
+          const aMul = layer.alpha;
+
+          for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            if (!prefersReducedMotion) {
+              n.x += n.vx;
+              n.y += n.vy;
+              wrap(n, layer);
+
+              const dx = mx - n.x;
+              const dy = my - n.y;
+              const d2 = dx * dx + dy * dy;
+              if (d2 < 200 * 200 && d2 > 1) {
+                const pull = n.hub ? 0.0007 : 0.0004;
+                n.vx += dx * pull;
+                n.vy += dy * pull;
+              }
+
+              n.vx *= 0.993;
+              n.vy *= 0.993;
+              const speed = Math.hypot(n.vx, n.vy);
+              const max = n.hub ? 0.26 : 0.4;
+              if (speed > max) {
+                n.vx = (n.vx / speed) * max;
+                n.vy = (n.vy / speed) * max;
+              }
+            }
+          }
+
+          const grid = buildGrid(layer);
+          const size = layer.cellSize;
+
+          for (let i = 0; i < nodes.length; i++) {
+            const a = nodes[i];
+            const ax = a.x - layer.camX;
+            const ay = a.y - layer.camY;
+            if (ax < -maxDist || ax > width + maxDist || ay < -maxDist || ay > height + maxDist) continue;
+
+            const gx = Math.floor(a.x / size);
+            const gy = Math.floor(a.y / size);
+
+            for (let ox = -1; ox <= 1; ox++) {
+              for (let oy = -1; oy <= 1; oy++) {
+                const bucket = grid[(gx + ox) + ',' + (gy + oy)];
+                if (!bucket) continue;
+                for (let k = 0; k < bucket.length; k++) {
+                  const j = bucket[k];
+                  if (j <= i) continue;
+                  const b = nodes[j];
+                  const dx = a.x - b.x;
+                  const dy = a.y - b.y;
+                  const dist2 = dx * dx + dy * dy;
+                  const same = a.cluster === b.cluster;
+                  const reach = (same ? maxDist : maxDist * 0.72) * ((a.hub || b.hub) ? 1.3 : 1);
+                  if (dist2 > reach * reach) continue;
+
+                  const dist = Math.sqrt(dist2);
+                  const t = 1 - dist / reach;
+                  ctx.beginPath();
+                  ctx.moveTo(ax, ay);
+                  ctx.lineTo(b.x - layer.camX, b.y - layer.camY);
+                  const base = same ? 0.05 : 0.028;
+                  ctx.strokeStyle = 'rgba(26, 115, 232,' + ((base + t * 0.15) * aMul) + ')';
+                  ctx.lineWidth = (a.hub || b.hub) ? 1.05 : 0.65;
+                  ctx.stroke();
+                }
+              }
+            }
+          }
+
+          for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            const x = n.x - layer.camX;
+            const y = n.y - layer.camY;
+            if (x < -8 || x > width + 8 || y < -8 || y > height + 8) continue;
+
+            if (n.hub) {
+              ctx.beginPath();
+              ctx.arc(x, y, n.r * 3.1, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(26, 115, 232,' + (0.055 * aMul) + ')';
+              ctx.fill();
+            }
+
+            ctx.beginPath();
+            ctx.arc(x, y, n.r, 0, Math.PI * 2);
+            ctx.fillStyle = n.hub
+              ? 'rgba(26, 115, 232,' + (0.55 * aMul) + ')'
+              : 'rgba(26, 115, 232,' + (0.36 * aMul) + ')';
+            ctx.fill();
+          }
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          for (let i = 0; i < layers.length; i++) {
+            drawLayer(layers[i]);
+          }
+        }
+
         function animate() {
           draw();
           requestAnimationFrame(animate);
         }
-        
-        // Start animation
+
+        resize();
         animate();
       })();
     </script>
