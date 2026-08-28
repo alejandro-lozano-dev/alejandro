@@ -14,11 +14,57 @@
     <title>Alejandro Lozano</title>
     <meta name="author" content="Alejandro Lozano">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <script>
+      (function () {
+        var KEY = 'theme';
+        function apply(night) {
+          document.documentElement.classList.toggle('night', night);
+        }
+        var saved = null;
+        try { saved = localStorage.getItem(KEY); } catch (e) {}
+        var forced = null;
+        try {
+          var q = new URLSearchParams(window.location.search).get('theme');
+          if (q === 'night') forced = true;
+          if (q === 'day') forced = false;
+        } catch (e) {}
+        var night = forced !== null
+          ? forced
+          : (saved === 'night' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        apply(night);
+        window.__setTheme = function (night, persist) {
+          apply(night);
+          if (persist !== false) {
+            try { localStorage.setItem(KEY, night ? 'night' : 'day'); } catch (e) {}
+          }
+          document.dispatchEvent(new CustomEvent('themechange', { detail: { night: night } }));
+        };
+        window.__isNight = function () {
+          return document.documentElement.classList.contains('night');
+        };
+        try {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+            try { if (localStorage.getItem(KEY)) return; } catch (err) {}
+            window.__setTheme(e.matches, false);
+          });
+        } catch (e) {}
+      })();
+    </script>
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
     <link rel="icon" href="./images/m.png">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
   </head>
   <body>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false" aria-label="Switch to night mode" title="Night mode">
+      <svg class="theme-toggle-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 14.3A8.5 8.5 0 0 1 9.7 3 7 7 0 1 0 21 14.3z"></path>
+      </svg>
+      <svg class="theme-toggle-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"></circle>
+        <path d="M12 2.5v2.2M12 19.3v2.2M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6"></path>
+      </svg>
+    </button>
     <!-- Network Background -->
     <canvas id="network-bg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></canvas>
     
@@ -61,7 +107,14 @@
                             i++;
                             setTimeout(typeName, speed + 15);
                           } else {
+                            nameEl.innerHTML = '<span class="typed-nick">Ale</span>jandro Lozano';
                             cursorEl.classList.add('typed-cursor--done');
+                            requestAnimationFrame(function () {
+                              requestAnimationFrame(function () {
+                                var nick = nameEl.querySelector('.typed-nick');
+                                if (nick) nick.classList.add('typed-nick--on');
+                              });
+                            });
                           }
                         }
 
@@ -78,8 +131,8 @@
                           alt="Alejandro Lozano headshot">
                       </a>
                     </div>
-                    <p>I am a 5th-year PhD candidate at the <a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a>, where I work on vision-language foundation models. I am fortunate to be advised by <a href="https://ai.stanford.edu/~syyeung/">Serena Yeung-Levy</a> and supported by the <a href="https://arcinstitute.org/">Arc Institute</a>. I am deeply grateful to NVIDIA, Amazon, and Stanford HAI for believing in our team's mission generously funding our research.</p>
-                    <p>During my PhD, I worked part-time at Microsoft Research under the supervision of <a href="https://www.microsoft.com/en-us/research/people/hoifung-poon/">Hoifung Poon</a>, an amazing leader, with mentorship from the incredible Jeya Maria Jose, a once-in-a-lifetime mentor and researcher. I am deeply grateful to both of them for their mentorship and support.</p>
+                    <p>Hello! I am Ale. I am a 5th-year PhD candidate at the <a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a>, where I work on vision-language foundation models. I am fortunate to be advised by <a href="https://ai.stanford.edu/~syyeung/">Serena Yeung-Levy</a> and supported by the <a href="https://arcinstitute.org/">Arc Institute</a>. I am deeply grateful to NVIDIA, Amazon, and Stanford HAI for believing in our team's mission generously funding our research.</p>
+                    <p>During my PhD, I worked part-time at Microsoft Research under the supervision of <a href="https://www.microsoft.com/en-us/research/people/hoifung-poon/">Hoifung Poon</a>, an amazing leader, with mentorship from the incredible Jeya Maria Jose, a once-in-a-lifetime researcher. I am deeply grateful to both of them for their  support.</p>
                     <p>Additionally, I am an editor for the Multimodal AI for Scientific Research chapter of the <a href="https://hai.stanford.edu/ai-index">AI Index</a> and a former student lead for <a href="https://ai4all.spcs.stanford.edu/">AI4ALL</a> at Stanford, where I led the Medical AI section.</p>  
                     <p>
                       <span id="work-focus"></span>
@@ -123,12 +176,27 @@
 
 
             <!-- RECENT NEWS -->
-            <section id="news" class="news-section">
-              <h2>Recent News</h2>
-              <ul class="news-list">
+            <table id="news" class="news-section" style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+              <tbody>
+                <tr>
+                  <td style="padding:20px 2.5%;width:100%;vertical-align:middle">
+                    <h2>Recent News</h2>
+                    <ul class="news-list">
 
                 <li class="news-item">
-                  <span class="news-date">[Jun 2026]</span>
+                  <span class="news-date">[August 2026]</span>
+                  <span class="news-content">
+                    MARVL received a <a href="https://dbds.stanford.edu/serena-yeung-levy-receives-1-39-million-nlm-grant-to-develop-ai-tool-for-interpreting-microscopy-images/">$1.39 million NLM grant</a> building on our research. Congrats to Serena, Jeff, James, Min, Yuhui, and Xiao Xiao!
+                  </span>
+                </li>
+
+                <li class="news-item">
+                  <span class="news-date">[June 2026]</span>
+                  <span class="news-content">I am interning at Microsoft AI.</span>
+                </li> 
+
+                <li class="news-item">
+                  <span class="news-date">[June 2026]</span>
                   <span class="news-content">1 paper accepted to ECCV 2026 (congrats Ryan). See you in Malmö (will def visit Copenhagen again).</span>
                 </li>
                 
@@ -155,23 +223,34 @@
                   <span class="news-content">Awarded Nvidia grant.</span>
                 </li>
                 <li class="news-item">
-                  <span class="news-date">[February 2025]</span>
+                  <span class="news-date">[Feb 2025]</span>
                   <span class="news-content">3 papers accepted to CVPR 2025.</span>
                 </li>
                 <li class="news-item">
-                  <span class="news-date">[January 2025]</span>
+                  <span class="news-date">[Jan 2025]</span>
                   <span class="news-content">2 papers accepted to ICLR 2025</span>
                 </li>
                 <li class="news-item">
-                  <span class="news-date">[December 2024]</span>
+                  <span class="news-date">[Dec 2024]</span>
                   <span class="news-content">1 paper accepted to NEJM AI.</span>
                 </li>
                 <li class="news-item">
-                  <span class="news-date">[September 2024]</span>
+                  <span class="news-date">[Sep  2024]</span>
                   <span class="news-content">1 paper accepted to NeurIPS 2024.</span>
                 </li>
+                <li class="news-item">
+                  <span class="news-date">[June 2024]</span>
+                  <span class="news-content">Gave Talk at FDA</span>
+                </li>
+                <li class="news-item">
+                  <span class="news-date">[Dec 2023]</span>
+                  <span class="news-content">Best paper award at ML4H 2023, congrats MedAlign team!</span>
+                </li>
               </ul>
-            </section>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
             <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
               
@@ -662,11 +741,9 @@
                   <td style="padding:20px 2.5%;width:100%;vertical-align:middle">
                     <h2>Students</h2>
                     <p class="students-note">
-                      Probably one of the most rewarding experiences I’ve had at Stanford has been mentoring amazing students. I’m incredibly grateful to my students for placing such enormous trust in me and allowing me to help them achieve their goals. 
+                      One of the most rewarding parts of my time at Stanford has been mentoring brilliant students. I’m incredibly grateful for their trust and for the opportunity to help them achieve their goals.
 
-
-
-                      I try to take one Master’s student each year. While I don’t have the bandwidth to take on multiple students, I’m always happy to chat, provide advice, and discuss potential research ideas. If your research interests align with mine and you’re at Stanford, please feel free to send me a message via Slack :)
+                      I typically take on one or two Master’s students each year. While I don’t have the bandwidth to take more, I’m always happy to chat, share my perspective on PhD life, or discuss research ideas. If your interests align with mine and you’re at Stanford, feel free to reach out on Slack
                     </p>
                     <ul class="teaching-list students-list">
                       <li class="teaching-item">
@@ -705,11 +782,11 @@
                 <tr>
                   <td style="padding:20px;width:100%;vertical-align:middle">
                     <h2>Visitor Map</h2>
-                    <p style="margin-bottom: 15px; color: #666;">
+                    <p class="map-lead">
                       See where visitors are coming from around the world
                     </p>
-                    <div id="visitor-map" style="width:100%; height:500px; border-radius:8px; overflow:hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></div>
-                    <p style="text-align:center; margin-top: 10px; font-size: 12px; color: #999;">
+                    <div id="visitor-map"></div>
+                    <p class="map-count">
                       <span id="visitor-count">0</span> unique locations visited
                     </p>
                   </td>
@@ -818,6 +895,23 @@
       // Initialize on load
       window.addEventListener('load', initCarousel);
       window.addEventListener('resize', initCarousel);
+
+      (function () {
+        var btn = document.getElementById('theme-toggle');
+        if (!btn) return;
+        function sync() {
+          var night = document.documentElement.classList.contains('night');
+          btn.setAttribute('aria-pressed', night ? 'true' : 'false');
+          btn.setAttribute('aria-label', night ? 'Switch to day mode' : 'Switch to night mode');
+          btn.setAttribute('title', night ? 'Day mode' : 'Night mode');
+        }
+        btn.addEventListener('click', function () {
+          window.__setTheme(!document.documentElement.classList.contains('night'));
+          sync();
+        });
+        document.addEventListener('themechange', sync);
+        sync();
+      })();
       
       // Touch swipe support
       let touchStartX = 0;
@@ -866,12 +960,28 @@
           worldCopyJump: true
         });
         
-        // Add a world map style (using CartoDB Positron for a cleaner globe look)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        // Add a world map style (Carto light/dark to match the page theme)
+        const mapTiles = {
+          day: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+          night: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        };
+        const tileOptions = {
           attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © <a href="https://carto.com/attributions">CARTO</a>',
           maxZoom: 5,
           subdomains: 'abcd'
-        }).addTo(map);
+        };
+        let mapTileLayer = L.tileLayer(
+          window.__isNight && window.__isNight() ? mapTiles.night : mapTiles.day,
+          tileOptions
+        ).addTo(map);
+
+        function applyMapTheme(night) {
+          map.removeLayer(mapTileLayer);
+          mapTileLayer = L.tileLayer(night ? mapTiles.night : mapTiles.day, tileOptions).addTo(map);
+        }
+        document.addEventListener('themechange', function (e) {
+          applyMapTheme(e.detail.night);
+        });
         
         // Get stored visitor locations
         let visitorLocations = JSON.parse(localStorage.getItem('visitorLocations') || '[]');
@@ -1116,6 +1226,9 @@
           const nodes = layer.nodes;
           const maxDist = layer.linkDist;
           const aMul = layer.alpha;
+          const night = document.documentElement.classList.contains('night');
+          const rgb = night ? '126, 182, 255' : '26, 115, 232';
+          const glow = night ? 1.45 : 1;
 
           for (let i = 0; i < nodes.length; i++) {
             const n = nodes[i];
@@ -1177,7 +1290,7 @@
                   ctx.moveTo(ax, ay);
                   ctx.lineTo(b.x - layer.camX, b.y - layer.camY);
                   const base = same ? 0.05 : 0.028;
-                  ctx.strokeStyle = 'rgba(26, 115, 232,' + ((base + t * 0.15) * aMul) + ')';
+                  ctx.strokeStyle = 'rgba(' + rgb + ',' + ((base + t * 0.15) * aMul * glow) + ')';
                   ctx.lineWidth = (a.hub || b.hub) ? 1.05 : 0.65;
                   ctx.stroke();
                 }
@@ -1194,15 +1307,15 @@
             if (n.hub) {
               ctx.beginPath();
               ctx.arc(x, y, n.r * 3.1, 0, Math.PI * 2);
-              ctx.fillStyle = 'rgba(26, 115, 232,' + (0.055 * aMul) + ')';
+              ctx.fillStyle = 'rgba(' + rgb + ',' + (0.055 * aMul * glow) + ')';
               ctx.fill();
             }
 
             ctx.beginPath();
             ctx.arc(x, y, n.r, 0, Math.PI * 2);
             ctx.fillStyle = n.hub
-              ? 'rgba(26, 115, 232,' + (0.55 * aMul) + ')'
-              : 'rgba(26, 115, 232,' + (0.36 * aMul) + ')';
+              ? 'rgba(' + rgb + ',' + (0.55 * aMul * glow) + ')'
+              : 'rgba(' + rgb + ',' + (0.36 * aMul * glow) + ')';
             ctx.fill();
           }
         }
