@@ -413,6 +413,10 @@ html.night .profile-row {
   display: none;
 }
 
+.profile-photo--rect {
+  border-radius: 0 !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .profile-photo-mobile {

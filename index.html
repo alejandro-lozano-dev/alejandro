@@ -131,8 +131,8 @@
                           alt="Alejandro Lozano headshot">
                       </a>
                     </div>
-                    <p>Hello! I am Ale. I am a 5th-year PhD candidate at the <a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a>, where I work on vision-language foundation models. I am fortunate to be advised by <a href="https://ai.stanford.edu/~syyeung/">Serena Yeung-Levy</a> and supported by the <a href="https://arcinstitute.org/">Arc Institute</a>. I am deeply grateful to NVIDIA, Amazon, and Stanford HAI for believing in our team's mission generously funding our research.</p>
-                    <p>During my PhD, I worked part-time at Microsoft Research under the supervision of <a href="https://www.microsoft.com/en-us/research/people/hoifung-poon/">Hoifung Poon</a>, an amazing leader, with mentorship from the incredible Jeya Maria Jose, a once-in-a-lifetime researcher. I am deeply grateful to both of them for their  support.</p>
+                    <p>Hello! I am Ale. I am a 5th-year PhD candidate at the <a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a>, where I work on vision-language foundation models. I am fortunate to be advised by <a href="https://ai.stanford.edu/~syyeung/">Serena Yeung-Levy</a> and supported by the <a href="https://arcinstitute.org/">Arc Institute</a>. I am deeply grateful to NVIDIA, Amazon, NIH (RO1) and Stanford HAI for believing in our team's mission generously funding our research.</p>
+                    <p>During my PhD, I worked part-time at Microsoft Research under the supervision of <a href="https://www.linkedin.com/in/hoifung-poon-9559943/">Hoifung Poon</a>, an amazing leader, with mentorship from the incredible Jeya Maria Jose, a once-in-a-lifetime researcher. I am deeply grateful to both of them for their  support.</p>
                     <p>Additionally, I am an editor for the Multimodal AI for Scientific Research chapter of the <a href="https://hai.stanford.edu/ai-index">AI Index</a> and a former student lead for <a href="https://ai4all.spcs.stanford.edu/">AI4ALL</a> at Stanford, where I led the Medical AI section.</p>  
                     <p>
                       <span id="work-focus"></span>
@@ -141,7 +141,7 @@
                     <script>
                       (function () {
                         var options = [
-                          'My current work focuses on multimodal learning, retrieval-augmented multimodal systems, and agent-based reasoning, especially as they apply to real-world precision medicine.',
+                          'My current work focuses on multimodal learning, retrieval-augmented multimodal systems, and agent-based reasoning, especially as they apply to real-world precision medicine and scientific discovery.',
                           'My work focuses on making lots of GPUs go brrrrr on medical data so we can hill-climb benchmarks.'
                         ];
                         document.getElementById('work-focus').textContent =
@@ -173,6 +173,20 @@
               </tbody>
               
             </table>
+            <script>
+              (function () {
+                if (Math.random() < 0.70) return;
+                var src = 'images/MSR_INaOUT.jpg';
+                document.querySelectorAll('.profile-photo-mobile a, .profile-photo-cell a').forEach(function (link) {
+                  link.href = src;
+                  var img = link.querySelector('img');
+                  if (img) {
+                    img.src = src;
+                    img.classList.add('profile-photo--rect');
+                  }
+                });
+              })();
+            </script>
 
 
             <!-- RECENT NEWS -->
